@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+  <name>dich</name>
+  <version>2016.1.0</version>
+  <description>The dich package</description>
+  <license>GPLv3</license>
+
+  <author>Helio Perroni Filho</author>
+  <maintainer email="mail@xperroni.me">Helio Perroni Filho</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>clarus</build_depend>
+  <build_depend>cv_video</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>terminal_io</build_depend>
+  <build_depend>yamabros</build_depend>
+
+  <run_depend>clarus</run_depend>
+  <run_depend>cv_video</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>terminal_io</run_depend>
+  <run_depend>yamabros</run_depend>
+</package>

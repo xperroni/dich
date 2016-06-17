@@ -1,0 +1,42 @@
+<launch>
+  <arg name="icam_03_teach"  value="/home/helio/Roboken/Data/Straight/2015-09-24-01/video.mpg" />
+  <arg name="icam_03_replay" value="/home/helio/Roboken/Data/Straight/2015-09-24-02/video.mpg" />
+
+  <!-- "Outdoors" session -->
+  <arg name="teach_outdoors"  value="/home/helio/Roboken/Data/Straight/2014-10-21-yaw-02-00/video.mpg" />
+  <arg name="replay_outdoors" value="/home/helio/Roboken/Data/Straight/2014-10-21-yaw-02--2/video.mpg" />
+  <arg name="outdoors_030" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-01-00/video.mpg" />
+  <arg name="outdoors_045" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-02-00/video.mpg" />
+  <arg name="outdoors_060" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-03-00/video.mpg" />
+
+  <!-- "Straight" session -->
+  <arg name="teach_straight"  value="/home/helio/Roboken/Data/Straight/2014-10-09-yaw-01-00/video.mpg" />
+  <arg name="replay_straight" value="/home/helio/Roboken/Data/Straight/2014-10-09-yaw-02-00/video.mpg" />
+
+  <!-- "Turn left" session -->
+  <arg name="teach_turn_left"  value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-02-00/video.mpg" />
+  <arg name="replay_turn_left" value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-04-00/video.mpg" />
+
+  <!-- "Turn right" session -->
+  <arg name="teach_turn_right"  value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-01-00/video.mpg" />
+  <arg name="replay_turn_right" value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-03-00/video.mpg" />
+
+  <arg name="teach_navigation_converge" value="/home/helio/Roboken/Data/Straight/2016-04-28-04/video.mpg" />
+  <arg name="replay_navigation_converge" value="/home/helio/Roboken/Data/Straight/2016-04-28-04/replay/01/video.mpg" />
+
+  <arg name="teach_navigation_maintain" value="/home/helio/Roboken/Data/Straight/2016-04-29-03/video.mpg" />
+  <arg name="replay_navigation_maintain" value="/home/helio/Roboken/Data/Straight/2016-04-29-03/replay/01/video.mpg" />
+
+  <arg name="evaluate_angle_00" value="/home/helio/Roboken/Data/Straight/2016-06-17-00/video.mpg" />
+  <arg name="evaluate_angle_01" value="/home/helio/Roboken/Data/Straight/2016-06-17-01/video.mpg" />
+  <arg name="evaluate_angle_02" value="/home/helio/Roboken/Data/Straight/2016-06-17-02/video.mpg" />
+  <arg name="evaluate_angle_03" value="/home/helio/Roboken/Data/Straight/2016-06-17-03/video.mpg" />
+  <arg name="evaluate_angle_04" value="/home/helio/Roboken/Data/Straight/2016-06-17-04/video.mpg" />
+  <arg name="evaluate_angle_05" value="/home/helio/Roboken/Data/Straight/2016-06-17-05/video.mpg" />
+
+  <node pkg="dich" type="ground_truth" name="ground_truth" required="true">
+    <param name="path"  value="$(arg evaluate_angle_00)" />
+    <param name="path_replay" value="$(arg evaluate_angle_02)" />
+    <param name="path_ground_truth" value="$(find dich)/../../ground_truth.txt" />
+  </node>
+</launch>
