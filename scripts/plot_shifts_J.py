@@ -34,6 +34,11 @@ def load_data(path):
     (x, y) = ([], [])
     shift_vectors = []
     for line in open(path):
+        #row = fetch(r'Shift correlations: ([^"\r\n\x1b]+)', line)
+        #if row != None:
+            #(j, correlations) = row
+            #shift_vectors.append(normalize(correlations))
+
         row = fetch(r'Shift: ([^"\r\n\x1b]+)', line)
         if row != None:
             (j, shift, shift_vector) = row
@@ -70,17 +75,19 @@ def plot_ground_truth(plotter, ground_truth):
 
     (x, y) = ground_truth
 
-    plotter.plot(x, y, 'g-', linewidth=2.0, label='Ground Truth')
+    plotter.plot(x, y, 'k--', linewidth=4.0)
+    plotter.plot(x, y, 'w--', linewidth=2.0, label='Ground Truth')
 
 
 def plot_shifts(plotter, shifts):
     (x, y) = shifts
+    plotter.plot(x, y, 'k-', linewidth=4.0)
     plotter.plot(x, y, 'w-', linewidth=2.0, label='Shifts')
 
 
-def plot_shift_map(plotter, x0, shift_map):
+def plot_shift_map(plotter, x0, shift_map, colormap):
     (m, n) = shift_map.shape
-    c = plotter.matshow(shift_map, cmap=cm.jet, origin='lower', extent=(x0, x0 + n, -m // 2, m // 2)) # cmap=cm.Greys
+    c = plotter.matshow(shift_map, cmap=getattr(cm, colormap), origin='lower', extent=(x0, x0 + n, -m // 2, m // 2))
     pyplot.colorbar(c)
 
 
@@ -112,14 +119,14 @@ def setup_axes(axes, shifts, shift_map, ground_truth):
     return x0
 
 
-def plot(path, path_ground_truth=''):
+def plot(path, path_ground_truth, colormap):
     (shifts, shift_map) = load_data(path)
     ground_truth = load_ground_truth(path_ground_truth)
 
     (figure, axes) = pyplot.subplots()
     x0 = setup_axes(axes, shifts, shift_map, ground_truth)
 
-    plot_shift_map(axes, x0, shift_map)
+    plot_shift_map(axes, x0, shift_map, colormap)
     plot_ground_truth(axes, ground_truth)
     plot_shifts(axes, shifts)
 

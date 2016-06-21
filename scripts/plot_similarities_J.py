@@ -65,8 +65,8 @@ def load_ground_truth(path):
     return (x, y)
 
 
-def plot_similarities(plotter, similarities):
-  c = plotter.matshow(similarities, cmap=cm.jet, origin='lower') # cm.Greys
+def plot_similarities(plotter, similarities, colormap):
+  c = plotter.matshow(similarities ** 2.0, cmap=getattr(cm, colormap), origin='lower')
   pyplot.colorbar(c)
 
 
@@ -77,7 +77,8 @@ def plot_points(plotter, points):
 
 def plot_correspondences(plotter, correspondences):
     (y, x) = zip(*correspondences)
-    plotter.plot(x, y, 'r-', linewidth=2.0)
+    plotter.plot(x, y, 'k-', linewidth=4.0)
+    plotter.plot(x, y, 'w-', linewidth=2.0)
 
 
 def plot_ground_truth(plotter, ground_truth):
@@ -85,15 +86,16 @@ def plot_ground_truth(plotter, ground_truth):
         return
 
     (x, y) = ground_truth
-    plotter.plot(x, y, 'g-', linewidth=2.0, label='Ground Truth')
+    plotter.plot(x, y, 'k--', linewidth=4.0)
+    plotter.plot(x, y, 'w--', linewidth=2.0)
 
 
-def plot(path, path_ground_truth=''):
+def plot(path, path_ground_truth, colormap):
     (similarities, correspondences) = load_data(path)
     ground_truth = load_ground_truth(path_ground_truth)
     (figure, axes) = pyplot.subplots()
 
-    plot_similarities(axes, similarities)
+    plot_similarities(axes, similarities, colormap)
 
     plot_correspondences(axes, correspondences)
     plot_ground_truth(axes, ground_truth)
