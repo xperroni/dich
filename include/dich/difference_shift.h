@@ -64,6 +64,13 @@ struct DifferenceShift
    */
   int operator () (const DifferenceImage &Jr, const DifferenceImage &Jt);
 
+  /**
+   * \brief Compute shift between the given images.
+   *
+   * If the working memory is not full, return the fallback value instead of current shift estimate.
+   */
+  int operator () (int fallback, const DifferenceImage &Jr, const DifferenceImage &Jt);
+
   void correlate(const DifferenceImage &Jr, const DifferenceImage &Jt);
 
   cv::Mat shiftVector(const DifferenceImage &Jr, const DifferenceImage &Jt);

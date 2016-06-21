@@ -72,6 +72,12 @@ int DifferenceShift::operator () (const DifferenceImage &Jr, const DifferenceIma
   return estimate - 0.5 * shifts.cols;
 }
 
+int DifferenceShift::operator () (int fallback, const DifferenceImage &Jr, const DifferenceImage &Jt)
+{
+  int estimated = (*this)(Jr, Jt);
+  return (correlations.full() ? estimated : fallback);
+}
+
 void DifferenceShift::correlate(const DifferenceImage &Jr, const DifferenceImage &Jt)
 {
   fftw::Signal &replay = columns[0];
@@ -107,10 +113,9 @@ cv::Mat DifferenceShift::shiftVector(const DifferenceImage &Jr, const Difference
 
     int xS = std::max(0, c2 - j * cols);
     int xR = std::max(0, j * cols - c2);
-    int wR = std::min(R.cols - xS, R.cols - xR);
 
-    cv::Rect roiS(xS, 0, wR, 1);
-    cv::Rect roiR(xR, 0, wR, 1);
+    cv::Rect roiS(xS, 0, c2, 1);
+    cv::Rect roiR(xR, 0, c2, 1);
 
     S(roiS) += R(roiR);
   }
