@@ -35,6 +35,7 @@ namespace dich
 static const cv::Scalar BLUE(255, 0, 0);
 
 Replayer::Replayer():
+  pairing(false),
   shift_estimate(0)
 {
   std::string path_replay = param::path_replay();
@@ -74,11 +75,11 @@ void Replayer::handle(Video &video, Frame &frame)
 
 void Replayer::process(const DifferenceImage &Jr)
 {
-  DifferenceImage Jt = pairing(Jr);
+  DifferenceImage Jt = pairing(shift_estimate, Jr);
   if (Jt.empty())
     return;
 
-  shift_estimate = shift(Jr, Jt);
+  shift_estimate = shift(shift_estimate, Jr, Jt);
 
   std::cerr << cv::Point3i(Jr.j, Jt.j, shift_estimate) << std::endl;
 }
