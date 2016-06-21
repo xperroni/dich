@@ -106,6 +106,12 @@ struct TeachStream
 
   cv::Mat operator () (int index)
   {
+    if (index < 0)
+      index = 0;
+
+    if (index >= images.size())
+      index = images.size() - 1;
+
     return images[index];
   }
 };
