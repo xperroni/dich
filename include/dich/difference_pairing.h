@@ -48,9 +48,11 @@ struct DifferencePairing
 
   double leak;
 
-  DifferencePairing();
+  DifferencePairing(bool kidnapped = true);
 
   DifferenceImage operator() (const DifferenceImage &J);
+
+  DifferenceImage operator() (int shift, const DifferenceImage &J);
 
   int estimate(int index);
 

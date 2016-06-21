@@ -27,22 +27,31 @@ using clarus::List;
 namespace dich
 {
 
-DifferencePairing::DifferencePairing():
+DifferencePairing::DifferencePairing(bool kidnapped):
   samples(param::similarities::samples()),
   points(samples * param::similarities::width()),
-  y0(0), yn(std::numeric_limits<int>::max() - 1),
-  line(0, NAN),
+  y0(0), yn(param::similarities::height()),
+  line(0, 1.0),
   width(param::similarities::width() - 2),
   height(param::similarities::height()),
   error(param::similarities::error()),
   leak(param::similarities::leak())
 {
-  // Nothing to do.
+  if (kidnapped)
+  {
+    yn = std::numeric_limits<int>::max() - 1;
+    line.y = NAN;
+  }
 }
 
 DifferenceImage DifferencePairing::operator() (const DifferenceImage &Jr)
 {
-  cv::Mat column = correspondences(Jr); //, y0, yn);
+  return (*this)(0, Jr);
+}
+
+DifferenceImage DifferencePairing::operator() (int shift, const DifferenceImage &Jr)
+{
+  cv::Mat column = correspondences(shift, Jr, y0, yn);
   update(Jr.j, column);
 
   int i = estimate(Jr.j);
@@ -77,7 +86,8 @@ cv::Point2f DifferencePairing::interpolate()
 
       double dx = x2 - x1;
       double dy = y2 - y1;
-      if (dx < width)
+      double m = dy / dx;
+      if (dx < width || m < 0.1 || m > 10)
         continue;
 
       int count = 0;
@@ -96,7 +106,6 @@ cv::Point2f DifferencePairing::interpolate()
 
       if (count > best)
       {
-        double m = dy / dx;
         double b = y1 - m * x1;
 
         best = count;
