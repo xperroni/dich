@@ -16,20 +16,25 @@
 
   <arg name="evaluate_angle_00" value="/home/helio/Roboken/Data/Straight/2016-06-17-00/video.mpg" />
   <arg name="evaluate_angle_01" value="/home/helio/Roboken/Data/Straight/2016-06-17-01/video.mpg" />
+  <arg name="evaluate_angle_03" value="/home/helio/Roboken/Data/Straight/2016-06-17-03/video.mpg" />
   <arg name="evaluate_angle_10" value="/home/helio/Roboken/Data/Straight/2016-06-17-10/video.mpg" />
 
-  <param name="~framerate" value="20" />
+  <arg name="parking_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-01/video.mpg" />
+  <arg name="parking_fwd_03" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-03/video.mpg" />
+
+<!--   <param name="~framerate" value="20" /> -->
 
   <!-- Camera control -->
-<!--  <node pkg="dich" type="steering_offline" name="steering_offline">
+  <node pkg="dich" type="steering_offline" name="steering_offline">
     <param name="path" value="$(arg evaluate_angle_00)" />
-  </node>-->
+  </node>
 
   <!-- Robot control -->
   <node pkg="dich" type="replay" name="replay" required="true">
-    <param name="path" value="$(arg teach_turn_right)" />
-    <param name="path_replay" value="$(arg replay_turn_right)" />
-<!--     <param name="queue" value="128" /> -->
-<!--     <param name="similarity_samples" value="10" /> -->
+    <param name="path" value="$(arg evaluate_angle_00)" />
+<!--     <param name="path_replay" value="$(arg evaluate_angle_03)" /> -->
+    <param name="shift_width" value="32" />
+    <param name="headless" value="true" />
+    <param name="queue" value="0" />
   </node>
 </launch>
