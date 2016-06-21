@@ -71,7 +71,7 @@ DifferenceImage DifferenceFilter::operator () (const cv::Mat &image)
   j_++;
 
   cv::Mat scaled = images::scale(accumulated_, width_, cv::INTER_NEAREST);
-  DifferenceImage J = DifferenceImage(i_, j_, scaled / clarus::max(scaled));
+  DifferenceImage J = DifferenceImage(i_, j_, scaled);
   accumulated_ = ZERO;
   count_ = 0;
 
