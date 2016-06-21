@@ -74,6 +74,8 @@ struct Correspondences
 
   cv::Mat operator () (const DifferenceImage &J);
 
+  cv::Mat operator () (int shift, const DifferenceImage &J);
+
   cv::Mat operator () (const DifferenceImage &J, int y0, int yn);
 
   cv::Mat operator () (int shift, const DifferenceImage &J, int y0, int yn);

@@ -50,6 +50,11 @@ cv::Mat Correspondences::operator () (const DifferenceImage &J)
   return (*this)(0, J, 0, taught.size());
 }
 
+cv::Mat Correspondences::operator () (int shift, const DifferenceImage &J)
+{
+  return (*this)(shift, J, 0, taught.size());
+}
+
 cv::Mat Correspondences::operator () (const DifferenceImage &J, int y0, int yn)
 {
   return (*this)(0, J, y0, yn);
@@ -154,11 +159,12 @@ void Correspondences::loadReplay(int shift, const DifferenceImage &Jr)
     if (neighborhoods.size() >= limit)
       break;
 
-    cv::Rect roi;
-    roi.x = std::max(j - side + 1, 0);
-    roi.y = std::max(i - side + 1, 0);
-    roi.width = std::min(side, active.cols - roi.x);
-    roi.height = std::min(side, active.rows - roi.y);
+    int x1 = std::max(j - side, 0);
+    int y1 = std::max(i - side, 0);
+    int x2 = std::min(j + side, active.cols);
+    int y2 = std::min(i + side, active.rows);
+
+    cv::Rect roi(x1, y1, x2 - x1, y2 - y1);
     cv::rectangle(active, roi, ONE, CV_FILLED);
   }
 
