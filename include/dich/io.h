@@ -34,6 +34,9 @@ template<>
 clarus::List<cv::Mat> load(const std::string &path);
 
 template<>
+clarus::List<cv::Point2d> load(const std::string &path);
+
+template<>
 clarus::List<DifferenceImage> load(const std::string &path);
 
 } // namespace dich

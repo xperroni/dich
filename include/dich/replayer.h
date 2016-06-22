@@ -24,6 +24,7 @@
 #include <dich/difference_pairing.h>
 #include <dich/difference_shift.h>
 
+#include <cv_video/recorder.h>
 #include <cv_video/video.h>
 
 namespace dich
@@ -36,6 +37,8 @@ struct Replayer
   ros::Publisher publisher;
 
   cv_video::Video video;
+
+  cv_video::Recorder record;
 
   DifferenceFilter filter;
 
@@ -60,6 +63,8 @@ struct Replayer
   void process(const DifferenceImage &Jr);
 
   void display(cv_video::Video &video, cv_video::Frame &frame);
+
+  void publish(int index, int shift);
 
   void plotSimilarities(const cv::Mat &column);
 

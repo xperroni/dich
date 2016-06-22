@@ -123,7 +123,7 @@ struct ReplayStream
   int gap;
 
   ReplayStream():
-    replayer(param::path_replay()),
+    replayer(param::path_replay_offline()),
     gap(param::difference::exposure())
   {
     // Nothing to do.

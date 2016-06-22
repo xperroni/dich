@@ -30,6 +30,10 @@
   <arg name="corridor_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-01/video.mpg" />
   <arg name="corridor_fwd_02" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-02/video.mpg" />
 
+  <arg name="corridor_fwd_01_replay_01"
+       value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-01/replay/online/01/replay.mpg" />
+
+
   <arg name="evaluate_direction_00" value="/home/helio/Roboken/Data/Straight/2016-05-26-00/video.mpg" />
   <arg name="evaluate_direction_01" value="/home/helio/Roboken/Data/Straight/2016-05-26-01/video.mpg" />
   <arg name="evaluate_direction_02" value="/home/helio/Roboken/Data/Straight/2016-05-26-02/video.mpg" />
@@ -51,8 +55,8 @@
   <arg name="parking_fwd_03" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-03/video.mpg" />
 
   <node pkg="dich" type="ground_truth" name="ground_truth" required="true">
-    <param name="path"  value="$(arg parking_fwd_01)" />
-    <param name="path_replay" value="$(arg parking_fwd_03)" />
+    <param name="path"  value="$(arg corridor_fwd_01)" />
+    <param name="path_replay_offline" value="$(arg corridor_fwd_01_replay_01)" />
     <param name="path_ground_truth" value="$(find dich)/../../ground_truth.txt" />
   </node>
 </launch>

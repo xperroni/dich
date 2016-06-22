@@ -33,9 +33,9 @@ std::string image()
   return ros::names::resolve("image");
 }
 
-std::string index()
+std::string match()
 {
-  return ros::names::resolve("index");
+  return ros::names::resolve("match");
 }
 
 } // namespace name
@@ -58,9 +58,19 @@ std::string path()
   return param<std::string>("~path", "");
 }
 
-std::string path_replay()
+std::string path_replay_offline()
 {
-  return param<std::string>("~path_replay", "");
+  return param<std::string>("~path_replay_offline", "");
+}
+
+std::string path_replay_online()
+{
+  return param<std::string>("~path_replay_online", (current_path() / "replay.mpg").native());
+}
+
+std::string path_steerings()
+{
+  return param<std::string>("~path_steerings", "");
 }
 
 std::string path_ground_truth()
@@ -169,7 +179,7 @@ int column()
 
 int width()
 {
-  return param<int>("~shift_width", 64);
+  return param<int>("~shift_width", 32);
 }
 
 } // namespace shift
@@ -179,7 +189,7 @@ namespace replay
 
 int queue()
 {
-  return param<int>("~queue", 1);
+  return param<int>("~queue", 0);
 }
 
 } // namespace replay

@@ -38,9 +38,9 @@ namespace name
 std::string image();
 
 /**
- * \brief Topic for steering record indexes.
+ * \brief Topic for image match data.
  */
-std::string index();
+std::string match();
 
 } // namespace name
 
@@ -70,9 +70,19 @@ double lin_vel();
 std::string path();
 
 /**
- * \brief Path to a replay video record.
+ * \brief Path to an input replay video record.
  */
-std::string path_replay();
+std::string path_replay_offline();
+
+/**
+ * \brief Path to an output replay video record.
+ */
+std::string path_replay_online();
+
+/**
+ * \brief Path to a steerings record.
+ */
+std::string path_steerings();
 
 /**
  * \brief Path to output ground truth file.

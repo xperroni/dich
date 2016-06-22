@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with DICH. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <dich/steerer.h>
+#include <dich/io.h>
 #include <dich/settings.h>
 #include <dich/Match.h>
 
@@ -31,42 +33,36 @@ using yamabros::Robot;
 namespace dich
 {
 
-struct SteeringMock
+Steerer::Steerer():
+  node(),
+  subscriber(node.subscribe<Match>(name::match(), 1, &Steerer::callback, this)),
+  steerings(load<cv::Point2d>(param::path_steerings())),
+  v(param::lin_vel()),
+  w(param::ang_vel())
 {
-  /** \brief Reference to the current ROS node. */
-  ros::NodeHandle node;
+  // Nothing to do.
+}
 
-  /** \brief Subscriber object used to receive commands. */
-  ros::Subscriber subscriber;
+void Steerer::callback(const MatchConstPtr &message)
+{
+  int index = message->index;
+  int shift = message->shift;
 
-  Video video;
-
-  bool playing;
-
-  SteeringMock()
+  if (index >= steerings.size())
   {
-    subscriber = node.subscribe<Match>(name::match(), 1, &SteeringMock::callback, this);
-    playing = false;
+    spur.coast();
+    ros::shutdown();
+    return;
   }
 
-  void callback(const MatchConstPtr &message)
-  {
-    if (playing)
-      return;
+  cv::Point2d speeds = steerings[index];
+  double vt = speeds.x;
+  double wt = speeds.y;
 
-    playing = true;
-    video.replay(param::path(), name::image(), ros::shutdown);
-  }
-};
+  if (wt == 0)
+    wt = -w * copysign(1.0, shift);
+
+  spur.steer(vt, wt);
+}
 
 } // namespace dich
-
-int main(int argc, char *argv[])
-{
-  Robot robot;
-  robot.init("steering_offline", argc, argv);
-  robot.set("steering", new dich::SteeringMock());
-  robot.spin();
-
-  return 0;
-}

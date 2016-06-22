@@ -17,55 +17,17 @@ You should have received a copy of the GNU General Public License
 along with DICH. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <dich/settings.h>
-#include <dich/Match.h>
-
-#include <cv_video/video.h>
-using cv_video::Video;
+#include <dich/steerer.h>
+using dich::Steerer;
 
 #include <yamabros/robot.h>
 using yamabros::Robot;
 
-#include <std_msgs/Int32.h>
-
-namespace dich
-{
-
-struct SteeringMock
-{
-  /** \brief Reference to the current ROS node. */
-  ros::NodeHandle node;
-
-  /** \brief Subscriber object used to receive commands. */
-  ros::Subscriber subscriber;
-
-  Video video;
-
-  bool playing;
-
-  SteeringMock()
-  {
-    subscriber = node.subscribe<Match>(name::match(), 1, &SteeringMock::callback, this);
-    playing = false;
-  }
-
-  void callback(const MatchConstPtr &message)
-  {
-    if (playing)
-      return;
-
-    playing = true;
-    video.replay(param::path(), name::image(), ros::shutdown);
-  }
-};
-
-} // namespace dich
-
 int main(int argc, char *argv[])
 {
   Robot robot;
-  robot.init("steering_offline", argc, argv);
-  robot.set("steering", new dich::SteeringMock());
+  robot.init("steering", argc, argv);
+  robot.set("steerer", new Steerer());
   robot.spin();
 
   return 0;

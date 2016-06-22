@@ -19,22 +19,40 @@
   <arg name="evaluate_angle_03" value="/home/helio/Roboken/Data/Straight/2016-06-17-03/video.mpg" />
   <arg name="evaluate_angle_10" value="/home/helio/Roboken/Data/Straight/2016-06-17-10/video.mpg" />
 
+  <arg name="corridor_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-01/video.mpg" />
+  <arg name="corridor_fwd_02" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-02/video.mpg" />
+
   <arg name="parking_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-01/video.mpg" />
   <arg name="parking_fwd_03" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-03/video.mpg" />
+
+  <arg name="roundabout_01" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-01/video.mpg" />
+  <arg name="roundabout_01_steerings" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-01/steerings.txt" />
+
+  <arg name="roundabout_02" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-02/video.mpg" />
+  <arg name="roundabout_02_steerings" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-02/steerings.txt" />
+
+  <arg name="corridor_fwd_01_steerings" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-01/steerings.txt" />
 
 <!--   <param name="~framerate" value="20" /> -->
 
   <!-- Camera control -->
-  <node pkg="dich" type="steering_offline" name="steering_offline">
-    <param name="path" value="$(arg evaluate_angle_03)" />
+  <remap from="image" to="/camera/image_raw"/>
+  <node pkg="usb_cam" type="usb_cam_node" name="camera" />
+<!--  <node pkg="dich" type="steering_offline" name="steering_offline">
+    <param name="path" value="$(arg corridor_fwd_01)" />
+  </node>-->
+
+  <!-- Robot control -->
+  <node pkg="yamabros" type="spur_server" name="spur_server" />
+  <node pkg="dich" type="steering" name="steering" required="true">
+    <param name="path_steerings" value="$(arg roundabout_02_steerings)" />
+    <param name="ang_vel" value="0.01" />
   </node>
 
   <!-- Robot control -->
   <node pkg="dich" type="replay" name="replay" required="true">
-    <param name="path" value="$(arg evaluate_angle_00)" />
-<!--     <param name="path_replay_offline" value="$(arg evaluate_angle_03)" /> -->
-    <param name="shift_width" value="32" />
-    <param name="headless" value="true" />
-    <param name="queue" value="0" />
+    <param name="path" value="$(arg roundabout_02)" />
   </node>
+
+<!--   <node pkg="rviz" type="rviz" name="view" args="- -no-stereo -d $(find dich)/config/online.rviz" respawn="true" /> -->
 </launch>

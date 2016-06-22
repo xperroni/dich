@@ -26,6 +26,9 @@ using clarus::List;
 #include <cv_video/replayer.h>
 using cv_video::Replayer;
 
+#include <iostream>
+#include <fstream>
+
 namespace dich
 {
 
@@ -46,6 +49,28 @@ List<cv::Mat> load(const std::string &path)
   }
 
   return images;
+}
+
+template<>
+List<cv::Point2d> load(const std::string &path)
+{
+  ROS_INFO_STREAM("Load path: \"" << path << '"');
+
+  List<cv::Point2d> points;
+  std::ifstream file(path.c_str());
+  for (;;)
+  {
+    char c = '\0';
+    double x = NAN;
+    double y = NAN;
+
+    file >> c >> x >> c >> y >> c;
+
+    if (isnan(x) || isnan(y))
+      return points;
+
+    points.append(cv::Point2d(x, y));
+  }
 }
 
 template<>

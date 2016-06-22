@@ -22,6 +22,8 @@ using clarus::List;
 using cv_video::Video;
 using cv_video::Frame;
 
+#include <dich/Match.h>
+
 #include <dich/io.h>
 #include <dich/settings.h>
 
@@ -35,10 +37,13 @@ namespace dich
 static const cv::Scalar BLUE(255, 0, 0);
 
 Replayer::Replayer():
+  node(),
+  publisher(node.advertise<Match>(name::match(), 1, true)),
+  record(param::path_replay_online()),
   pairing(false),
   shift_estimate(0)
 {
-  std::string path_replay = param::path_replay();
+  std::string path_replay = param::path_replay_offline();
   if (path_replay != "")
   {
     List<DifferenceImage> replay = load<DifferenceImage>(path_replay);
@@ -57,15 +62,13 @@ Replayer::Replayer():
   else
     video.subscribe("replay", param::replay::queue(), &Replayer::display, this);
 
-  publisher = node.advertise<std_msgs::Int32>(name::index(), 1, true);
-
-  std_msgs::Int32 message;
-  message.data = -1;
-  publisher.publish(message);
+  // Warns the steering node that the replayer is ready.
+  publish(0, 0);
 }
 
 void Replayer::handle(Video &video, Frame &frame)
 {
+  record(frame);
   DifferenceImage Jr = filter(frame.share());
   if (Jr.empty())
     return;
@@ -81,7 +84,9 @@ void Replayer::process(const DifferenceImage &Jr)
 
   shift_estimate = shift(shift_estimate, Jr, Jt);
 
-  std::cerr << cv::Point3i(Jr.j, Jt.j, shift_estimate) << std::endl;
+  publish(Jt.i, shift_estimate);
+
+  std::cerr << cv::Point3i(Jr.i, Jt.i, shift_estimate) << std::endl;
 }
 
 void Replayer::display(Video &video, Frame &frame)
@@ -112,6 +117,14 @@ void Replayer::display(Video &video, Frame &frame)
 
   viewer::show("Replay", bgr(Jr));
   plotSimilarities(column);
+}
+
+void Replayer::publish(int index, int shift)
+{
+  Match match;
+  match.index = index;
+  match.shift = shift;
+  publisher.publish(match);
 }
 
 static cv::Mat normalize(const cv::Mat &data)
