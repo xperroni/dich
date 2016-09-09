@@ -32,7 +32,7 @@ using yamabros::Robot;
 int main(int argc, char *argv[])
 {
   fftw_init_threads();
-  fftw_plan_with_nthreads(8);
+  fftw_plan_with_nthreads(4);
 
   Robot robot;
   robot.init("replay", argc, argv);
