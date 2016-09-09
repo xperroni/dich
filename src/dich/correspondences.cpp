@@ -27,6 +27,8 @@ using clarus::ZERO;
 
 #include <ros/console.h>
 
+#include <tbb/tbb.h>
+
 namespace dich
 {
 
@@ -60,6 +62,39 @@ cv::Mat Correspondences::operator () (const DifferenceImage &J, int y0, int yn)
   return (*this)(0, J, y0, yn);
 }
 
+struct match
+{
+  fftw::Signals &aROIs;
+
+  fftw::Signals &aNOIs;
+
+  fftw::Signals &matches;
+
+  int points;
+
+  double s;
+
+  match(fftw::Signals &aROIs_, fftw::Signals &aNOIs_, int points_, double s_, fftw::Signals &matches_):
+    aROIs(aROIs_),
+    aNOIs(aNOIs_),
+    matches(matches_),
+    points(points_),
+    s(s_)
+  {
+    tbb::parallel_for(tbb::blocked_range<int>(0, points), *this);
+
+    matches.transform();
+  }
+
+  void operator() (const tbb::blocked_range<int> &r) const
+  {
+    int k0 = r.begin();
+    int kn = r.end();
+    for (int k = k0; k < kn; k++)
+      matches[k].C.mul(aROIs[k], aNOIs[k], -1, s);
+  }
+};
+
 cv::Mat Correspondences::operator () (int shift, const DifferenceImage &J, int y0, int yn)
 {
   loadReplay(shift, J);
@@ -76,6 +111,8 @@ cv::Mat Correspondences::operator () (int shift, const DifferenceImage &J, int y
     const cv::Mat &D = coefficients[i];
 
     loadTeach(teach);
+
+//     match(aROIs, aNOIs, points, s, matches);
 
     for (int j = 0; j < points; j++)
       matches[j].C.mul(aROIs[j], aNOIs[j], -1, s);

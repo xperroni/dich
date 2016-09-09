@@ -22,6 +22,8 @@ using clarus::ZERO;
 
 #include <dich/settings.h>
 
+#include <tbb/tbb.h>
+
 namespace dich
 {
 
@@ -78,15 +80,45 @@ int DifferenceShift::operator () (int fallback, const DifferenceImage &Jr, const
   return (correlations.full() ? estimated : fallback);
 }
 
+struct match
+{
+  fftw::Signal &replay;
+
+  fftw::Signals &columns;
+
+  fftw::Signals &matches;
+
+  double s;
+
+  match(fftw::Signals &columns_, double s_, fftw::Signals &matches_):
+    replay(columns_[0]),
+    columns(columns_),
+    matches(matches_),
+    s(s_)
+  {
+    tbb::parallel_for(tbb::blocked_range<int>(0, matches.size()), *this);
+
+    matches.transform();
+  }
+
+  void operator() (const tbb::blocked_range<int> &r) const
+  {
+    int k0 = r.begin();
+    int kn = r.end();
+    for (int k = k0; k < kn; k++)
+      matches[k].C.mul(columns[k + 1], replay, -1, s);
+  }
+};
+
 void DifferenceShift::correlate(const DifferenceImage &Jr, const DifferenceImage &Jt)
 {
   fftw::Signal &replay = columns[0];
-  replay.set(Jr);
+  replay.set(fourier::normalize(Jr));
 
   for (int i = 1, n = columns.size(); i < n; i++)
   {
-    int j = (i - 1) * cols;
-    columns[i].set(Jt.normalized(0, j, rows, cols));
+    cv::Rect roi((i - 1) * cols, 0, cols, rows);
+    columns[i].set(fourier::normalize(Jt(roi)));
   }
 
   columns.transform();
@@ -96,33 +128,29 @@ void DifferenceShift::correlate(const DifferenceImage &Jr, const DifferenceImage
     matches[j].C.mul(columns[j + 1], replay, -1, s);
 
   matches.transform();
+
+//   match(columns, s, matches);
 }
 
 cv::Mat DifferenceShift::shiftVector(const DifferenceImage &Jr, const DifferenceImage &Jt)
 {
   correlate(Jr, Jt);
 
-  cv::Mat D = Jr.magnitudeInv(rows, cols);
-  cv::Mat S(1, shifts.cols, CV_64F, ZERO);
-  int c2 = S.cols / 2;
+  int reach = Jr.cols - cols;
+  cv::Mat likelihoods(1, reach * 2, CV_64F, cv::Scalar::all(0));
 
-  cv::Rect roi(0, 0, D.cols, D.rows);
-  for (int j = 0, n = matches.size(); j < n; j++)
+  for (int j = 0, n = Jr.cols / cols; j < n; j++)
   {
-    cv::Mat R = cv::Mat(matches[j].toMat(), roi).mul(D);
-
-    int xS = std::max(0, c2 - j * cols);
-    int xR = std::max(0, j * cols - c2);
-
-    cv::Rect roiS(xS, 0, c2, 1);
-    cv::Rect roiR(xR, 0, c2, 1);
-
-    S(roiS) += R(roiR);
+    cv::Mat correlated(matches[j].toMat(), cv::Rect(0, 0, reach, 1));
+    cv::Rect roi(reach - j * cols, 0, reach, 1);
+    likelihoods(roi) += correlated;
   }
 
-  ROS_INFO_STREAM("Shift correlations: (" << Jr.j << ", " << S << ")");
+  cv::Mat vector(likelihoods, cv::Rect(reach - shifts.cols / 2, 0, shifts.cols, 1));
 
-  return S;
+  ROS_INFO_STREAM("Shift correlations: (" << Jr.j << ", " << vector << ")");
+
+  return vector;
 }
 
 } // namespace dich
