@@ -1,58 +1,27 @@
 <launch>
-  <!-- "Straight" session -->
-  <arg name="teach_straight"  value="/home/helio/Roboken/Data/Straight/2014-10-09-yaw-01-00/video.mpg" />
-  <arg name="replay_straight" value="/home/helio/Roboken/Data/Straight/2014-10-09-yaw-02-00/video.mpg" />
-
-  <!-- "Turn right" session -->
-  <arg name="teach_turn_right"  value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-01-00/video.mpg" />
-  <arg name="replay_turn_right" value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-03-00/video.mpg" />
-
-  <!-- "Outdoors" session -->
-  <arg name="teach_outdoors"  value="/home/helio/Roboken/Data/Straight/2014-10-21-yaw-02-00/video.mpg" />
-  <arg name="replay_outdoors" value="/home/helio/Roboken/Data/Straight/2014-10-21-yaw-02--2/video.mpg" />
-  <arg name="replay_outdoors_030" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-01-00/video.mpg" />
-  <arg name="replay_outdoors_045" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-02-00/video.mpg" />
-  <arg name="replay_outdoors_060" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-03-00/video.mpg" />
-
-  <arg name="evaluate_angle_00" value="/home/helio/Roboken/Data/Straight/2016-06-17-00/video.mpg" />
-  <arg name="evaluate_angle_01" value="/home/helio/Roboken/Data/Straight/2016-06-17-01/video.mpg" />
-  <arg name="evaluate_angle_03" value="/home/helio/Roboken/Data/Straight/2016-06-17-03/video.mpg" />
-  <arg name="evaluate_angle_10" value="/home/helio/Roboken/Data/Straight/2016-06-17-10/video.mpg" />
-
-  <arg name="corridor_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-01/video.mpg" />
-  <arg name="corridor_fwd_02" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-02/video.mpg" />
-
-  <arg name="parking_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-01/video.mpg" />
-  <arg name="parking_fwd_03" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-03/video.mpg" />
-
-  <arg name="roundabout_01" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-01/video.mpg" />
-  <arg name="roundabout_01_steerings" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-01/steerings.txt" />
-
-  <arg name="roundabout_02" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-02/video.mpg" />
-  <arg name="roundabout_02_steerings" value="/home/helio/Roboken/Data/Straight/2016-06-22-roundabout-02/steerings.txt" />
-
-  <arg name="corridor_fwd_01_steerings" value="/home/helio/Roboken/Data/Straight/2016-06-18-corridor-fwd-01/steerings.txt" />
-
 <!--   <param name="~framerate" value="20" /> -->
 
   <!-- Camera control -->
+
   <remap from="image" to="/camera/image_raw"/>
+
   <node pkg="usb_cam" type="usb_cam_node" name="camera" />
-<!--  <node pkg="dich" type="steering_offline" name="steering_offline">
-    <param name="path" value="$(arg corridor_fwd_01)" />
-  </node>-->
 
   <!-- Robot control -->
+
   <node pkg="yamabros" type="spur_server" name="spur_server" />
+
   <node pkg="dich" type="steering" name="steering" required="true">
-    <param name="path_steerings" value="$(arg roundabout_02_steerings)" />
-    <param name="ang_vel" value="0.01" />
+    <param name="path_steerings" value="steerings.txt" />
+    <!-- <param name="ang_vel" value="0.1" /> -->
   </node>
 
-  <!-- Robot control -->
   <node pkg="dich" type="replay" name="replay" required="true">
-    <param name="path" value="$(arg roundabout_02)" />
+    <param name="path" value="teach.mpg" />
+    <param name="queue" value="30" />
+    <param name="shift_width" value="64" />
   </node>
 
-<!--   <node pkg="rviz" type="rviz" name="view" args="- -no-stereo -d $(find dich)/config/online.rviz" respawn="true" /> -->
+  <node pkg="rosbag" type="record" name="record_bag" args="/cmd_vel /odom /tf /forward" />
+                                                <!-- args="/cmd_vel /odom /tf /forward /camera/image_raw" -->
 </launch>

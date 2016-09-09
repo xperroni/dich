@@ -7,7 +7,6 @@
   <node pkg="yamabros" type="spur_server" name="spur_server" />
   <node pkg="dich" type="teach" name="teach" required="true">
     <param name="path" value="$(find dich)/../../video.mpg" />
-    <param name="ang_vel" value="0.1" />
   </node>
 
   <!-- User interface -->
@@ -15,5 +14,6 @@
   <node pkg="terminal_io" type="terminal_server" name="terminal_server" launch-prefix="konsole --nofork --new-tab -e" />
 
   <!-- Sensor logging -->
-<!--   <node pkg="rosbag" type="record" name="record_bag" args="/camera/image_raw /cmd_vel /odom /tf /forward" /> -->
+  <node pkg="rosbag" type="record" name="record_bag" args="/cmd_vel /odom /tf /forward" />
+                                                <!-- args="/cmd_vel /odom /tf /forward /camera/image_raw" -->
 </launch>

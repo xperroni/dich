@@ -1,39 +1,8 @@
 <launch>
-  <!-- "Straight" session -->
-  <arg name="teach_straight"  value="/home/helio/Roboken/Data/Straight/2014-10-09-yaw-01-00/video.mpg" />
-  <arg name="replay_straight" value="/home/helio/Roboken/Data/Straight/2014-10-09-yaw-02-00/video.mpg" />
-
-  <!-- "Turn right" session -->
-  <arg name="teach_turn_right"  value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-01-00/video.mpg" />
-  <arg name="replay_turn_right" value="/home/helio/Roboken/Data/Straight/2014-12-16-yaw-03-00/video.mpg" />
-
-  <!-- "Outdoors" session -->
-  <arg name="teach_outdoors"  value="/home/helio/Roboken/Data/Straight/2014-10-21-yaw-02-00/video.mpg" />
-  <arg name="replay_outdoors" value="/home/helio/Roboken/Data/Straight/2014-10-21-yaw-02--2/video.mpg" />
-  <arg name="replay_outdoors_030" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-01-00/video.mpg" />
-  <arg name="replay_outdoors_045" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-02-00/video.mpg" />
-  <arg name="replay_outdoors_060" value="/home/helio/Roboken/Data/Straight/2014-11-14-yaw-03-00/video.mpg" />
-
-  <arg name="evaluate_angle_00" value="/home/helio/Roboken/Data/Straight/2016-06-17-00/video.mpg" />
-  <arg name="evaluate_angle_01" value="/home/helio/Roboken/Data/Straight/2016-06-17-01/video.mpg" />
-  <arg name="evaluate_angle_03" value="/home/helio/Roboken/Data/Straight/2016-06-17-03/video.mpg" />
-  <arg name="evaluate_angle_10" value="/home/helio/Roboken/Data/Straight/2016-06-17-10/video.mpg" />
-
-  <arg name="parking_fwd_01" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-01/video.mpg" />
-  <arg name="parking_fwd_03" value="/home/helio/Roboken/Data/Straight/2016-06-18-parking-fwd-03/video.mpg" />
-
-<!--   <param name="~framerate" value="20" /> -->
-
-  <!-- Camera control -->
-  <node pkg="dich" type="steering_offline" name="steering_offline">
-    <param name="path" value="$(arg evaluate_angle_03)" />
-  </node>
-
-  <!-- Robot control -->
   <node pkg="dich" type="replay" name="replay" required="true">
-    <param name="path" value="$(arg evaluate_angle_00)" />
-<!--     <param name="path_replay_offline" value="$(arg evaluate_angle_03)" /> -->
-    <param name="shift_width" value="32" />
+    <!-- <param name="framerate" value="20" /> -->
+    <param name="path"                value="teach.mpg" />
+    <param name="path_replay_offline" value="replay.mpg" />
     <param name="headless" value="true" />
     <param name="queue" value="0" />
   </node>
