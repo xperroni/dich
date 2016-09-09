@@ -3,6 +3,7 @@
 from re import search
 
 from matplotlib import pyplot, cm
+from matplotlib.gridspec import GridSpec
 
 from numpy import array, ones, zeros
 from numpy import amin, amax, nonzero
@@ -65,9 +66,27 @@ def load_ground_truth(path):
     return (x, y)
 
 
-def plot_similarities(plotter, similarities, colormap):
-  c = plotter.matshow(similarities ** 2.0, cmap=getattr(cm, colormap), origin='lower')
-  pyplot.colorbar(c)
+def load_errors(correspondences, ground_truth):
+    (xs, ds) = ([], [])
+    if ground_truth == None:
+        return (xs, ds)
+
+    ground_truth = dict((x, y) for (x, y) in zip(*ground_truth))
+
+    for (y, x) in correspondences:
+        g = ground_truth.get(x)
+        if g == None:
+            continue
+
+        xs.append(x)
+        ds.append(y - g)
+
+    return (xs, ds)
+
+
+def plot_similarities(plotter, plotter_c, similarities, colormap):
+  c = plotter.matshow(similarities ** 2.0, cmap=getattr(cm, colormap), origin='lower') # cm.Greys
+  pyplot.colorbar(c, cax=plotter_c)
 
 
 def plot_points(plotter, points):
@@ -90,26 +109,58 @@ def plot_ground_truth(plotter, ground_truth):
     plotter.plot(x, y, 'w--', linewidth=2.0)
 
 
+def plot_errors(plotter, errors):
+    (x, y) = errors
+    plotter.plot(x, y, 'k-', linewidth=2.0)
+
+
+def setup_axes(axes1, axes2, similarities, errors, ground_truth):
+    (m, n) = similarities.shape
+    if ground_truth != None:
+        (x, y) = ground_truth
+        n = min(n, amax(x))
+
+    axes1.axis([-0.5, n - 0.5, -0.5, m - 0.5])
+    axes1.xaxis.set_ticks_position('bottom')
+    axes1.set_aspect('equal', 'box')
+
+    axes1.grid()
+    axes1.set_xlabel('Repeat image (index)', labelpad=10)
+    axes1.set_ylabel('Teach image (index)', labelpad=20)
+
+    (x, e) = errors
+    if len(x) == 0:
+        return
+
+    e0 = amin(e) - 10
+    en = amax(e) + 10
+
+    axes2.axis([0, n, e0, en])
+    axes2.set_aspect('equal', 'box')
+
+    axes2.grid()
+    axes2.set_xlabel('Repeat image (index)', labelpad=10)
+    axes2.set_ylabel('Pairing error (index)', labelpad=20)
+
+
 def plot(path, path_ground_truth, colormap):
     (similarities, correspondences) = load_data(path)
     ground_truth = load_ground_truth(path_ground_truth)
-    (figure, axes) = pyplot.subplots()
+    errors = load_errors(correspondences, ground_truth)
 
-    plot_similarities(axes, similarities, colormap)
+    gs = GridSpec(2, 2, width_ratios=[20, 1], height_ratios=[5, 1])
+    gs.update(wspace=0.05, hspace=0.2)
+    axes1 = pyplot.subplot(gs[0])
+    axes1c = pyplot.subplot(gs[1])
+    axes2 = pyplot.subplot(gs[2])
 
-    plot_correspondences(axes, correspondences)
-    plot_ground_truth(axes, ground_truth)
+    plot_similarities(axes1, axes1c, similarities, colormap)
+    plot_ground_truth(axes1, ground_truth)
+    plot_correspondences(axes1, correspondences)
+    plot_errors(axes2, errors)
 
-    (m, n) = similarities.shape
-    axes.axis([-0.5, n - 0.5, -0.5, m - 0.5])
-    axes.xaxis.set_ticks_position('bottom')
-    axes.set_aspect('auto', 'box')
+    setup_axes(axes1, axes2, similarities, errors, ground_truth)
 
-    axes.grid()
-    axes.set_xlabel('Replay image #', labelpad=10)
-    axes.set_ylabel('Teach image #', labelpad=20)
-
-    pyplot.tight_layout()
     pyplot.show()
 
 
