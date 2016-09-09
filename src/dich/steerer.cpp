@@ -38,9 +38,9 @@ Steerer::Steerer():
   subscriber(node.subscribe<Match>(name::match(), 1, &Steerer::callback, this)),
   steerings(load<cv::Point2d>(param::path_steerings())),
   v(param::lin_vel()),
-  w(param::ang_vel())
+  w(0.1 * param::ang_vel())
 {
-  // Nothing to do.
+  spur.coast();
 }
 
 void Steerer::callback(const MatchConstPtr &message)

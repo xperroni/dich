@@ -73,8 +73,8 @@ void Teacher::input(Terminal &terminal, char key)
   {
     case 's': steer(0,  0); return;
     case 'w': steer(V,  0); return;
-    case 'q': steer(V,  W); return;
-    case 'e': steer(V, -W); return;
+    case 'q': steer(V,  0.1 * W); return;
+    case 'e': steer(V, -0.1 * W); return;
     case 'a': steer(0,  W); return;
     case 'd': steer(0, -W); return;
     case 'z': spur.spin(+DEG); return;
