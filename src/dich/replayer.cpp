@@ -47,8 +47,18 @@ Replayer::Replayer():
   if (path_replay != "")
   {
     List<DifferenceImage> replay = load<DifferenceImage>(path_replay);
-    for (int i = 0, n = replay.size(); i < n; i++)
+    int n = replay.size();
+
+    time_t t0 = time(NULL);
+
+    for (int i = 0; i < n; i++)
       process(replay[i]);
+
+    time_t tn = time(NULL);
+    double s = difftime(tn, t0);
+    double q = s / n;
+
+    std::cerr << "Elapsed time (total, average): (" << s << ", " << q << ")" << std::endl;
 
     ros::shutdown();
 
