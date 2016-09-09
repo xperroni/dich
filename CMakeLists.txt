@@ -27,6 +27,10 @@ set_target_properties(fftw3_threads PROPERTIES IMPORTED_LOCATION
   "/usr/lib/x86_64-linux-gnu/libfftw3_threads.so"
 )
 
+# Add TBB support using local FindTBB.cmake file
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}")
+find_package(TBB REQUIRED)
+
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
